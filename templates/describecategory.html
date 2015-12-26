@@ -1,0 +1,52 @@
+{% extends "main.html" %}
+{% include 'header.html' %}
+{% block content %}
+	<div class = "flex">
+		<div class = "row category-list">
+			{% if logged_out == False %}
+				<a href = "{{url_for('addCategory')}}" class = "add_url">
+						<h5>Add New Category</h5>
+				</a>
+			{% endif %}
+			<span id = "category-heading"> Categories</span>
+				{% for category in categories %}
+						<a href = "{{url_for('printCategory', category_name = category.name)}}">
+							<h2>
+								{{category.name}}
+							</h2>
+						</a>
+				{% endfor %}
+			</span>
+		</div>
+		<div class = "row filler">
+		</div>
+		<div class = "row latest-item-list">
+			{% if logged_out == False %}
+				<a href = "{{url_for('addItem')}}" class = "add_url">
+						<h5>Add New Item</h5>
+				</a>
+			{% endif %}
+			<span id = "category-heading"> 
+				{% if category_name %}
+					{{category_name}} ({{count}} 
+					{% if count > 1 %}
+						items)
+					{% else %}
+						item)
+					{% endif %}
+				{% else %}
+					{{category_name}} Not Found
+				{% endif %}
+			</span>
+			{% if items %}
+				{% for item in items %}
+					<a href = "{{url_for('describeItem', category_name = category_name, item_name = item.name)}}">
+						<span id  = 'item-name'> 
+							<br>{{item.name}}
+						</span>
+					</a>
+				{% endfor %}
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}

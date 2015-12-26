@@ -1,0 +1,30 @@
+{% extends "main.html" %}
+{% include 'header.html' %}
+{% block content %}
+	<div class = "flex">
+		<div class = "row describe-item">
+			<form action="{{url_for('addItem')}}" method = "post">
+				<div class="form-group">
+					<label for="name">Name:</label>
+					<input type ="text" maxlength="50" class="form-control" name="name">
+
+					<label for="description">Description:</label>
+					<textarea class="form-control" maxlength="250" rows="3" name="description"></textarea>
+
+					<label for="category"> Category:</label>
+					<select name="category" class ="form-control">
+						{% for category in categories %}
+    						<option value={{category.name}}>{{category.name}}</option>
+ 						{% endfor %}  				 	
+  					</select>
+  					<br><br>
+					<button type="submit" class="btn btn-default" id="submit">
+					<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Create</button>
+				</div>
+			</form>
+			<a href = "{{url_for('homePage')}}">
+						<br>Cancel
+				</a>
+		</div>
+	</div>
+{% endblock %}
