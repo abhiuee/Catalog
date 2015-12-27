@@ -13,6 +13,7 @@ import httplib2
 import json
 from flask import make_response
 import requests
+from logic import Converter, Node
 
 app = Flask(__name__)
 
@@ -325,6 +326,24 @@ def editItem(category_name, item_name):
 	else:
 		return render_template('edititem.html', category = category, item = itemtoedit[0], categories = categories)
 
+@app.route('/catalog/xml/')
+def dumpCatalogXML():
+	'''Function to dump XML'''
+	categories = session.query(Category).order_by(asc(Category.name))
+	serialized_list = []
+	catalog = {}
+	for category in categories:
+		items = session.query(CatalogItem).filter_by(category_id = category.id).all()
+		cat_dict = category.serialize
+		if items:
+			cat_dict['items'] = [item.serialize for item in items]
+		serialized_list += [cat_dict]
+	catalog['category'] = serialized_list
+	xml_str =  Converter(wrap="catalog", indent = "    ").build(catalog)
+	response = make_response(xml_str) 
+	response.headers['Content-Type'] = 'text/xml; charset=utf-8'            
+	return response
+
 @app.route('/catalog/json/')
 def dumpCatalogJSON():
 	'''Function to dump JSON'''
@@ -336,7 +355,6 @@ def dumpCatalogJSON():
 		if items:
 			cat_dict['items'] = [item.serialize for item in items]
 		serialized_list += [cat_dict]
-	print serialized_list
 	return jsonify(catalog = serialized_list)
 
 if __name__ == '__main__':
